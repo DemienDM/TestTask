@@ -10,63 +10,68 @@ include_once "Discount/FiveDiscount.php";
 include_once "Discount/FourDiscount.php";
 include_once "Discount/ThreeDiscount.php";
 
-class Order 
+class Order
 {
-	private $_totalPrice = 0;
+    private $_totalPrice = 0;
 
-	private $_totalPriceWithDiscount = 0;
+    private $_totalPriceWithDiscount = 0;
 
-	private $_discountCheckComplete = false;
+    private $_discountCheckComplete = false;
 
-	private $_deteiledOrderProducts = array();
+    private $_deteiledOrderProducts = array();
 
     private $_usedDiscountNames = array();
 
-	private $_discountNameListSortedByPriority = [
-		'AB' => 'AB', 'DE' => 'DE', 'EFG' => 'EFG', 'AKLM' => 'AKLM',
-		'Five' => 'Five', 'Four' => 'Four', 'Three' => 'Three'
-	];
+    private $_discountNameListSortedByPriority = [
+        'AB'   => 'AB', 'DE' => 'DE', 'EFG' => 'EFG', 'AKLM' => 'AKLM',
+        'Five' => 'Five', 'Four' => 'Four', 'Three' => 'Three'
+    ];
 
-	function __construct(array $productList) {
-		$product = new Product();
-		$this->_deteiledOrderProducts = $product->getDetailedOrder($productList);
-		$this->_calculateTotalPrice();
-		$this->_availableDiscounts = $this->_checkAvailableDiscounts();
-	}
+    function __construct(array $productList)
+    {
+        $product                      = new Product();
+        $this->_deteiledOrderProducts = $product->getDetailedOrder($productList);
+        $this->_calculateTotalPrice();
+        $this->_availableDiscounts = $this->_checkAvailableDiscounts();
+    }
 
-	private function _calculateTotalPrice() {
-		foreach ($this->_deteiledOrderProducts as $product) {
-			$this->_totalPrice += $product['price'];
-		}
-		$this->_totalPriceWithDiscount = $this->_totalPrice;
-	}
+    private function _calculateTotalPrice()
+    {
+        foreach ($this->_deteiledOrderProducts as $product) {
+            $this->_totalPrice += $product['price'];
+        }
+        $this->_totalPriceWithDiscount = $this->_totalPrice;
+    }
 
-	private function _checkAvailableDiscounts() {
-		foreach ($this->_discountNameListSortedByPriority as $discountName) {
-			$discountClassName = $discountName . 'Discount';
-			$this->_discountNameListSortedByPriority[$discountName] = new $discountClassName();
-		}
+    private function _checkAvailableDiscounts()
+    {
+        foreach ($this->_discountNameListSortedByPriority as $discountName) {
+            $discountClassName                                      = $discountName . 'Discount';
+            $this->_discountNameListSortedByPriority[$discountName] = new $discountClassName();
+        }
 
-		while (!$this->_discountCheckComplete) {
-			$this->_searchAndApplyDiscount();
-		}
-	}
+        while (!$this->_discountCheckComplete) {
+            $this->_searchAndApplyDiscount();
+        }
+    }
 
-	private function _searchAndApplyDiscount() {
-		foreach ($this->_discountNameListSortedByPriority as $discountObject) {
-			$discountData = $discountObject->searchCase($this->_deteiledOrderProducts);
-			if($discountData) {
-				$this->_applyDiscount($discountData);
-				return;
-			}
+    private function _searchAndApplyDiscount()
+    {
+        foreach ($this->_discountNameListSortedByPriority as $discountObject) {
+            $discountData = $discountObject->searchCase($this->_deteiledOrderProducts);
+            if ($discountData) {
+                $this->_applyDiscount($discountData);
+                return;
+            }
 
             if ($discountObject === end($this->_discountNameListSortedByPriority)) {
                 $this->_discountCheckComplete = true;
             }
-		}
-	}
+        }
+    }
 
-	private function _applyDiscount(array $discountData) {
+    private function _applyDiscount(array $discountData)
+    {
         $this->_discountCheckComplete = $discountData['discountCheckComplete'];
         $this->_usedDiscountNames[]   = $discountData['name'];
 
@@ -78,14 +83,15 @@ class Order
                 );
             return;
         }
-		$this->_totalPriceWithDiscount -= $discountData['discountValue'];
+        $this->_totalPriceWithDiscount -= $discountData['discountValue'];
 
-		foreach ($discountData['usedProductIds'] as $productId) {
-			unset($this->_deteiledOrderProducts[$productId]);
-		}
-	}
+        foreach ($discountData['usedProductIds'] as $productId) {
+            unset($this->_deteiledOrderProducts[$productId]);
+        }
+    }
 
-    public function displayOrderInfo() {
+    public function displayOrderInfo()
+    {
         echo "\nTotal price without discount - {$this->_totalPrice}";
         if (count($this->_usedDiscountNames)) {
             $amountDiscount = $this->_totalPrice - $this->_totalPriceWithDiscount;

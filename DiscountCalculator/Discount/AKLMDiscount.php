@@ -8,10 +8,10 @@ class AKLMDiscount extends DiscountAbstract
 
     protected $_discountPercent = 5;
 
-	private $_needleProuctNames = ['firstKey' => 'A', 'secondKey' => ['K', 'L', 'M']];
+    private $_needleProuctNames = ['firstKey' => 'A', 'secondKey' => ['K', 'L', 'M']];
 
-	function searchCase(array $orderProductList)
-	{
+    function searchCase(array $orderProductList)
+    {
 
         $firstProductId = $this->_searchProduct($this->_needleProuctNames['firstKey'], $orderProductList);
         if ($firstProductId === false) {
@@ -31,12 +31,12 @@ class AKLMDiscount extends DiscountAbstract
             return array();
         }
 
-		$discountData['name']                  = $this->_name;
-		$discountData['discountValue']         = $this->_calculateDiscountValue($discountData['usedProductIds'], $orderProductList);
-		$discountData['discountPercent']       = $this->_discountPercent;
-		$discountData['discountCheckComplete'] = count($orderProductList) < 4;
+        $discountData['name']                  = $this->_name;
+        $discountData['discountValue']         = $this->_calculateDiscountValue($discountData['usedProductIds'], $orderProductList);
+        $discountData['discountPercent']       = $this->_discountPercent;
+        $discountData['discountCheckComplete'] = count($orderProductList) < 4;
 
-		return $discountData;
-	}
+        return $discountData;
+    }
 
 }

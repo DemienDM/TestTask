@@ -8,10 +8,10 @@ class FiveDiscount extends DiscountAbstract
 
     protected $_discountPercent = 20;
 
-	private $_needleProuctCount = 5;
+    private $_needleProuctCount = 5;
 
-	function searchCase(array $orderProductList)
-	{
+    function searchCase(array $orderProductList)
+    {
         $discountData = array();
 
         if (count($orderProductList) >= $this->_needleProuctCount) {
@@ -21,6 +21,6 @@ class FiveDiscount extends DiscountAbstract
             $discountData['discountCheckComplete'] = true;
         }
 
-		return $discountData;
-	}
+        return $discountData;
+    }
 }

@@ -6,14 +6,15 @@ class TextHelper
     const START_CHOICE_BLOCK  = '{';
     const FINISH_CHOICE_BLOCK = '}';
 
-    static function shuffleText($text) {
+    static function shuffleText($text)
+    {
 
         $matches = array();
         $pattern = '/' . self::START_CHOICE_BLOCK . '[а-яa-z' . self::SEPARATOR . '\s]+' . self::FINISH_CHOICE_BLOCK . '/ui';
 
         if (preg_match_all($pattern, $text, $matches)) {
             $matches   = array_shift($matches);
-            $trimItems = self::START_CHOICE_BLOCK . ',' .self::FINISH_CHOICE_BLOCK;
+            $trimItems = self::START_CHOICE_BLOCK . ',' . self::FINISH_CHOICE_BLOCK;
 
             foreach ($matches as $choiceItem) {
                 $cleanedElement = trim($choiceItem, $trimItems);
